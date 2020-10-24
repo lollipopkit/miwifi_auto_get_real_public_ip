@@ -17,7 +17,7 @@ def utf8_encode(string):
     return string.encode('utf-8')
 
 
-class MiWiFi(object):
+class MiWiFi():
     """
     docstring for MiWiFi
     """
@@ -49,7 +49,8 @@ class MiWiFi(object):
         miwifi_type = self.type
         miwifi_time = str(int(math.floor(time.time())))
         miwifi_random = str(int(math.floor(random.random() * 10000)))
-        self.nonce = '_'.join([miwifi_type, miwifi_device_id, miwifi_time, miwifi_random])
+        self.nonce = '_'.join(
+            [miwifi_type, miwifi_device_id, miwifi_time, miwifi_random])
         print('nonce: ', self.nonce)
 
         return self.nonce
@@ -61,7 +62,8 @@ class MiWiFi(object):
         """
         encoded_nonce = utf8_encode(self.nonce)
         encoded_pwd_key = utf8_encode(password + key)
-        hash_content = encoded_nonce + utf8_encode(hashlib.sha1(encoded_pwd_key).hexdigest())
+        hash_content = encoded_nonce + \
+            utf8_encode(hashlib.sha1(encoded_pwd_key).hexdigest())
         pwd = hashlib.sha1(hash_content)
         self.password = pwd.hexdigest()
         print('pwd: ', self.password)
@@ -75,7 +77,8 @@ class MiWiFi(object):
         """
         nonce = self.nonceCreat(device_id)
         password = self.oldPwd(password, key)
-        payload = {'username': 'admin', 'logtype': '2', 'password': password, 'nonce': nonce}
+        payload = {'username': 'admin', 'logtype': '2',
+                   'password': password, 'nonce': nonce}
 
         try:
             r = requests.post(self.URL_LOGIN, data=payload)
@@ -85,7 +88,8 @@ class MiWiFi(object):
 
         self.stok = stok
         self.cookies = r.cookies
-        self.URL_ACTION = "%s/cgi-bin/luci/;stok=%s/api" % (self.URL_ROOT, self.stok)
+        self.URL_ACTION = "%s/cgi-bin/luci/;stok=%s/api" % (
+            self.URL_ROOT, self.stok)
         self.URL_DeviceListDaemon = "%s/xqsystem/device_list" % self.URL_ACTION
         return stok, r.cookies
 
@@ -96,7 +100,8 @@ class MiWiFi(object):
         """
         if self.URL_DeviceListDaemon is not None and self.cookies is not None:
             try:
-                r = requests.get(self.URL_DeviceListDaemon, cookies=self.cookies)
+                r = requests.get(self.URL_DeviceListDaemon,
+                                 cookies=self.cookies)
                 # print json.dumps(json.loads(r.text), indent=4)
                 return json.loads(r.text).get('list')
             except Exception as e:
@@ -111,7 +116,8 @@ class MiWiFi(object):
         """
         if self.URL_DeviceListDaemon is not None and self.cookies is not None:
             try:
-                r = requests.get('%s/xqnetwork/%s' % (self.URL_ACTION, action), cookies=self.cookies)
+                r = requests.get('%s/xqnetwork/%s' %
+                                 (self.URL_ACTION, action), cookies=self.cookies)
                 return json.loads(r.text)
             except Exception as e:
                 raise e

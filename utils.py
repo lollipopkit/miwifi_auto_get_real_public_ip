@@ -17,7 +17,7 @@ def utf8_encode(string):
     return string.encode('utf-8')
 
 
-class MiWiFi(object):
+class MiWiFi():
     """
     docstring for MiWiFi
     """
